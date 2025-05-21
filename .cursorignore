@@ -1,0 +1,8 @@
+# Ignore Knowledge files from code analysis but keep them accessible for AI
+# This prevents code indexing and analysis but allows AI to read the content
+# Ignore specific file types for code analysis only
+# But explicitly allow reading these files
+!docs/**/*.md
+!docs/**/*.json
+# But don't ignore the Knowledge directory itself
+!docs/ 

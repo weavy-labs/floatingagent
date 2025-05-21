@@ -1,0 +1,9 @@
+{
+  "rules": [
+    {
+      "pattern": "docs/weavy",
+      "type": "knowledge",
+      "description": "Weavy documentation for how to use the UIKIT, API, to get started, and more."
+    }
+  ]
+} 

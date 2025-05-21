@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %> - Floating Agent</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <%- style %>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Floating Agent</h1>
+    </header>
+    
+    <main>
+      <%- body %>
+    </main>
+
+    <footer>
+      <p>&copy; <%= new Date().getFullYear() %> Floating Agent</p>
+    </footer>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <%- script %>
+</body>
+</html> 
