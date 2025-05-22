@@ -53,48 +53,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-// Function that will be injected into the content script context
-function initWeavy(config) {
-  // Load Weavy script
-  const script = document.createElement('script');
-  script.src = chrome.runtime.getURL('lib/weavy/weavy.js');
-  
-  script.onload = () => {
-    // Create Weavy instance after script is loaded
-    const weavy = new Weavy({
-      url: config.url,
-      tokenFactory: async () => {
-        try {
-          const response = await fetch(config.tokenEndpoint, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(config.userData)
-          });
-
-          if (!response.ok) {
-            throw new Error("Failed to get token");
-          }
-
-          const data = await response.json();
-          return data.access_token;
-        } catch (error) {
-          console.error("Token error:", error);
-          throw error;
-        }
-      }
-    });
-
-    // Create messenger
-    weavy.createMessenger({
-      container: config.container
-    });
-  };
-
-  script.onerror = () => {
-    throw new Error('Failed to load Weavy script');
-  };
-
-  document.head.appendChild(script);
-} 
+// Listen for extension icon clicks
+chrome.action.onClicked.addListener((tab) => {
+  // Send message to content script to toggle panel
+  chrome.tabs.sendMessage(tab.id, { action: 'togglePanel' });
+}); 

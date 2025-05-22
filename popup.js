@@ -1,130 +1,86 @@
-document.addEventListener('DOMContentLoaded', function() {
-  const API_BASE_URL = 'http://localhost:3000';
-  const getDomButton = document.getElementById('getDomButton');
-  const domStatus = document.getElementById('domStatus');
-  const iframe = document.getElementById('mainContent');
-
-  // Function to send message to iframe
-  function sendToIframe(type, data) {
-    iframe.contentWindow.postMessage({ type, data }, '*');
-  }
-
-  // Function to check if URL is accessible
-  function isUrlAccessible(url) {
-    if (!url) return false;
+// Function to handle form submission
+async function handleSubmit(event) {
+  event.preventDefault();
+  
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const submitButton = document.getElementById('submitButton');
+  const errorMessage = document.getElementById('errorMessage');
+  
+  // Disable submit button and clear error
+  submitButton.disabled = true;
+  errorMessage.textContent = '';
+  
+  try {
+    const response = await fetch('http://localhost:3000/api/weavy-token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: nameInput.value,
+        email: emailInput.value
+      })
+    });
     
-    // List of URL patterns that can't be accessed
-    const restrictedPatterns = [
-      'chrome://',
-      'chrome-extension://',
-      'edge://',
-      'about:',
-      'file://'
-    ];
-    
-    return !restrictedPatterns.some(pattern => url.startsWith(pattern));
-  }
-
-  // Function to get page DOM
-  async function getPageDOM() {
-    try {
-      getDomButton.disabled = true;
-      domStatus.textContent = 'Getting page DOM...';
-      domStatus.className = 'dom-status';
-
-      // Get the active tab
-      const tabs = await chrome.tabs.query({
-        active: true,
-        currentWindow: true
-      });
-
-      if (!tabs || tabs.length === 0) {
-        throw new Error('No active tab found');
-      }
-
-      const tab = tabs[0];
-
-      if (!tab.url) {
-        throw new Error('Cannot access this page: No URL available');
-      }
-
-      if (!isUrlAccessible(tab.url)) {
-        throw new Error(`Cannot access this page (${tab.url}). Please try on a regular website.`);
-      }
-
-      // Execute script to get DOM
-      const results = await chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        func: () => {
-          return {
-            html: document.documentElement.outerHTML,
-            url: window.location.href,
-            title: document.title
-          };
-        }
-      });
-
-      if (!results || results.length === 0) {
-        throw new Error('Failed to get page content');
-      }
-
-      const { html, url, title } = results[0].result;
-
-      // Send DOM to backend
-      const response = await fetch(`${API_BASE_URL}/api/dom`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          dom: html,
-          url: url,
-          title: title
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send DOM to backend');
-      }
-
-      const data = await response.json();
-      domStatus.textContent = 'DOM successfully sent to backend';
-      domStatus.className = 'dom-status success';
-    } catch (error) {
-      console.error('Error:', error);
-      domStatus.textContent = 'Error: ' + error.message;
-      domStatus.className = 'dom-status error';
-      sendToIframe('showError', error.message);
-    } finally {
-      getDomButton.disabled = false;
+    if (!response.ok) {
+      throw new Error(`Failed to get token: ${response.status}`);
     }
-  }
-
-  // Add click handler for DOM button
-  getDomButton.addEventListener('click', getPageDOM);
-
-  // Fetch features from backend
-  fetch(`${API_BASE_URL}/api/features`)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+    
+    const data = await response.json();
+    
+    // Store the token
+    chrome.storage.local.set({
+      weavyToken: data.access_token,
+      userData: {
+        name: nameInput.value,
+        email: emailInput.value
       }
-      sendToIframe('updateStatus', {
-        type: 'connected',
-        message: 'Connected to backend'
-      });
-      return response.json();
-    })
-    .then(data => {
-      sendToIframe('hideLoading');
-      sendToIframe('updateFeatures', data.features);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      sendToIframe('showError', 'Failed to load features. Please check if the backend is running.');
-      sendToIframe('updateStatus', {
-        type: 'disconnected',
-        message: 'Disconnected from backend'
+    }, () => {
+      // Close the popup
+      window.close();
+    });
+    
+  } catch (error) {
+    console.error('Error:', error);
+    errorMessage.textContent = error.message;
+  } finally {
+    submitButton.disabled = false;
+  }
+}
+
+// Function to load saved user data
+function loadUserData() {
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  
+  chrome.storage.local.get(['userData'], (result) => {
+    if (result.userData) {
+      nameInput.value = result.userData.name || '';
+      emailInput.value = result.userData.email || '';
+    }
+  });
+}
+
+// Initialize popup
+document.addEventListener('DOMContentLoaded', () => {
+  // Load saved user data
+  loadUserData();
+  
+  // Setup form submission
+  const form = document.getElementById('tokenForm');
+  if (form) {
+    form.addEventListener('submit', handleSubmit);
+  }
+  
+  // Setup reset button
+  const resetButton = document.getElementById('resetButton');
+  if (resetButton) {
+    resetButton.addEventListener('click', () => {
+      chrome.storage.local.remove(['weavyToken', 'userData'], () => {
+        // Reload the popup
+        window.location.reload();
       });
     });
+  }
 }); 

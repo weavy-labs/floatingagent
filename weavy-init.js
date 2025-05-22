@@ -27,7 +27,7 @@ async function initWeavy() {
   console.log("[weavy-init] Starting initialization");
   try {
     console.log("[weavy-init] Creating Weavy instance");
-    const weavy = new WeavyClient({
+    const weavy = new Weavy({
       url: "https://77d53be50974490089ac2382a8e9e510.weavy.io",
       tokenFactory: async () => {
         try {

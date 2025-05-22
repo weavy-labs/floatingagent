@@ -4,7 +4,6 @@
   "version": "1.0",
   "description": "A Chrome extension with DOM interaction capabilities",
   "action": {
-    "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
@@ -23,8 +22,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "css": ["styles.css"]
+      "js": ["content-script.js"]
     }
   ],
   "background": {
@@ -42,7 +40,8 @@
       "content.js",
       "styles.css",
       "weavy-init.js",
-      "lib/*"
+      "lib/*",
+      "agents.js"
     ],
     "matches": ["<all_urls>"]
   }]

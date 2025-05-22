@@ -2,98 +2,200 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://77d53be50974490089ac2382a8e9e510.weavy.io; connect-src 'self' https://77d53be50974490089ac2382a8e9e510.weavy.io wss://77d53be50974490089ac2382a8e9e510.weavy.io; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://77d53be50974490089ac2382a8e9e510.weavy.io; style-src 'self' 'unsafe-inline';">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://77d53be50974490089ac2382a8e9e510.weavy.io http://localhost:3000; connect-src 'self' https://77d53be50974490089ac2382a8e9e510.weavy.io wss://77d53be50974490089ac2382a8e9e510.weavy.io http://localhost:3000; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://77d53be50974490089ac2382a8e9e510.weavy.io; style-src 'self' 'unsafe-inline' data:; img-src 'self' data: https://*.weavy.io https://77d53be50974490089ac2382a8e9e510.weavy.io;">
   <title>Floating Agent</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="lib/bootstrap.min.css">
   <style>
-    body,html {
+    html, body {
+      height: 100%;
       margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      height:100%;
       overflow: hidden;
     }
 
-    .iframe-content {
-    overflow: hidden;
+    .h-100 {
+      min-height: 0%;
+      max-height: 100%;
+      height: 100%;
     }
 
-    .status-container {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
+    #closePanel {
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s ease;
     }
 
-    .status-indicator {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background-color: gray;
-      margin-right: 10px;
+    #closePanel:hover {
+      opacity: 0.75;
     }
 
-    .status-indicator.connected {
-      background-color: green;
-    }
-
-    .status-indicator.error {
-      background-color: red;
-    }
-
-    .loading {
-      margin: 20px 0;
-      font-style: italic;
-      color: #666;
-    }
-
-    .error {
-      color: red;
-      margin: 20px 0;
-      padding: 10px;
-      border: 1px solid red;
-      border-radius: 4px;
-      background-color: #fff0f0;
-    }
-
-    .features-container {
+    /* Empty state styles */
+    .empty-state {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
       display: none;
-      margin-top: 20px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.9);
+      z-index: 1;
+      text-align: center;
+      padding: 2rem;
     }
 
-    .feature-list {
-      list-style: none;
-      padding: 0;
+    .empty-state wy-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 1rem;
+      opacity: 0.5;
     }
 
-    .feature-item {
-      margin: 10px 0;
-      padding: 10px;
-      background-color: #f5f5f5;
-      border-radius: 4px;
+    .empty-state p {
+      color: #6c757d;
+      margin-bottom: 1rem;
     }
 
-    .weavy-container {
-      margin-top: 20px;
-      height: 500px;
+    .empty-state-create {
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
     }
+
+    .copilot-container {
+      position: relative;
+      flex: 1;
+      min-height: 0;
+    }
+
   </style>
   <script type="module" src="lib/weavy/weavy.js"></script>
   <script type="module" src="weavy-init.js"></script>
+  <script src="lib/bootstrap.min.js"></script>
 </head>
-<body>
-  <div class="iframe-content">
-    <div class="status-container">
-      <div class="status-indicator"></div>
-      <span class="status-text">Checking connection...</span>
-    </div>
+<body id="floating-agent-content" class="p-3">
+  <div class="content-area d-flex flex-column h-100 border bg-white rounded">
+      <div class="d-flex justify-content-between align-items-center p-3 text-dark bg-light border-bottom">
+        <div class="d-flex align-items-center gap-2">
+          <select id="agentSelect" class="form-select">
+            <option value="" disabled selected>Create your first agent</option>
+          </select>
+          <button type="button" class="btn btn-link p-0" id="editAgentBtn" title="Edit Agent">
+            <wy-icon name="edit"></wy-icon>
+          </button>
+          <button type="button" class="btn btn-link p-0" id="createAgentBtn" title="Create New Agent">
+            <wy-icon name="plus"></wy-icon>
+          </button>
+        </div>
+        <button type="button" class="btn-close" aria-label="Close" id="closePanel"></button>
+      </div>
+      <div class="copilot-container">
+        <wy-copilot 
+          id="floatingAgentCopilot" 
+          class="h-100 d-flex" 
+          agent="">
+          
+          <wy-button 
+            id="resetChatButton"
+            slot="actions" 
+            kind="icon">
+            <wy-icon name="stars"></wy-icon>
+          </wy-button>
 
-    <div class="loading">Loading...</div>
-    <div class="error" style="display: none;">Error loading content</div>
-    
-    <div class="weavy-container">
-      <wy-messenger></wy-messenger>
+          <wy-button 
+            id="saveSelectionButton"
+            slot="actions" 
+            kind="icon">
+            <wy-icon name="save"></wy-icon>
+          </wy-button>
+
+          <wy-button slot="suggestion-list" class="suggestion">Analyze this page's content</wy-button>
+          <wy-button slot="suggestion-list" class="suggestion">What are the main topics discussed here?</wy-button>
+          <wy-button slot="suggestion-list" class="suggestion">Find important links on this page</wy-button>
+          <wy-button slot="suggestion-list" class="suggestion">Summarize the key points</wy-button>
+          <wy-button slot="suggestion-list" class="suggestion">Help me understand this content</wy-button>
+        </wy-copilot>
+        <div class="empty-state">
+          <wy-icon name="bot"></wy-icon>
+          <p>No agents available</p>
+          <button type="button" class="btn btn-primary empty-state-create" id="emptyStateCreateBtn">Create Your First Agent</button>
+        </div>
+      </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+  </div>
+
+  <!-- Edit/Create Agent Modal -->
+  <div class="modal fade" id="editAgentModal" tabindex="-1" aria-labelledby="editAgentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editAgentModalLabel">Edit Agent</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editAgentForm">
+            <div class="mb-3">
+              <label for="agentName" class="form-label">Name</label>
+              <input type="text" class="form-control" id="agentName" required>
+            </div>
+            <div class="mb-3">
+              <label for="agentAvatar" class="form-label">Avatar</label>
+              <div class="d-flex align-items-center gap-3">
+                <div class="avatar-preview rounded-circle bg-light d-flex align-items-center justify-content-center" style="width: 64px; height: 64px; overflow: hidden;">
+                  <img id="avatarPreview" src="" alt="" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                  <wy-icon name="user" style="width: 32px; height: 32px;"></wy-icon>
+                </div>
+                <div class="d-flex flex-column gap-2">
+                  <input type="file" class="form-control" id="agentAvatar" accept="image/*">
+                  <small class="text-muted">Upload a square image for best results</small>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="agentInstructions" class="form-label">Instructions</label>
+              <textarea class="form-control" id="agentInstructions" rows="4" required></textarea>
+            </div>
+            <div class="mb-3 files-section" style="display: none;">
+              <label class="form-label">Files</label>
+              <wy-files id="agentFiles" class="d-block border rounded" style="height: 300px;"></wy-files>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger me-auto" id="deleteAgentBtn" style="display: none;">Delete Agent</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="saveAgentBtn">Save changes</button>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteConfirmModalLabel">Delete Agent</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete the agent "<span id="deleteAgentName"></span>"?</p>
+          <p class="text-danger mb-0">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete Agent</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="content.js"></script>
+  <script src="agents.js"></script>
 </body>
 </html> 

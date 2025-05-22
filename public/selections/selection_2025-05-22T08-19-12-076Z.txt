@@ -1,0 +1,36 @@
+
+Selection saved on: 2025-05-22T08:19:12.076Z
+
+Plain Text:
+They’re booking 40–50 enterprise meetings a week.
+
+Still not hitting targets.
+
+Here’s what was happening:
+
+– No GTM plan
+
+– No sales leader
+
+– No structured lead qualification
+
+– 4 junior-to-mid SDRs, and the founder managing everything
+
+– A partner program running at 10% capacity - badly neglected
+
+– Events bringing in leads… but no follow-up, no scoring, no conversions
+
+𝐃𝐨𝐳𝐞𝐧𝐬 𝐨𝐟 𝐭𝐚𝐜𝐭𝐢𝐜𝐬. 𝐙𝐞𝐫𝐨 𝐨𝐫𝐜𝐡𝐞𝐬𝐭𝐫𝐚𝐭𝐢𝐨𝐧.
+
+They were trying it all:
+
+→ 5 cold outreach agencies tasked with “booking meetings”
+
+→ Gift card incentives to get demos
+
+→ Google, LinkedIn, and Bing ads
+
+→ Even AI SDR flows - automated agents handling outreach
+
+HTML Content:
+<p>They’re booking 40–50 enterprise meetings a week.</p><p>Still not hitting targets.</p><p>Here’s what was happening:</p><p>– No GTM plan</p><p>– No sales leader</p><p>– No structured lead qualification</p><p>– 4 junior-to-mid SDRs, and the founder managing everything</p><p>– A partner program running at 10% capacity - badly neglected</p><p>– Events bringing in leads… but no follow-up, no scoring, no conversions</p><p>𝐃𝐨𝐳𝐞𝐧𝐬 𝐨𝐟 𝐭𝐚𝐜𝐭𝐢𝐜𝐬. 𝐙𝐞𝐫𝐨 𝐨𝐫𝐜𝐡𝐞𝐬𝐭𝐫𝐚𝐭𝐢𝐨𝐧.</p><p>They were trying it all:</p><p>→ 5 cold outreach agencies tasked with “booking meetings”</p><p>→ Gift card incentives to get demos</p><p>→ Google, LinkedIn, and Bing ads</p><p>→ Even AI SDR flows - automated agents handling outreach</p>

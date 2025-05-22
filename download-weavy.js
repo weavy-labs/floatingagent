@@ -1,39 +1,30 @@
-const https = require('https');
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
+const fetch = require('node-fetch');
 
-const WEAVY_URL = 'https://77d53be50974490089ac2382a8e9e510.weavy.io';
-const FILES_TO_DOWNLOAD = [
-  '/uikit-web/weavy.js',
-  '/uikit-web/weavy.css'
-];
-
-// Create lib directory if it doesn't exist
-const libDir = path.join(__dirname, 'lib');
-if (!fs.existsSync(libDir)) {
-  fs.mkdirSync(libDir);
+async function downloadWeavyAssets() {
+  const weavyUrl = "https://77d53be50974490089ac2382a8e9e510.weavy.io";
+  const libDir = path.join(__dirname, 'lib', 'weavy');
+  
+  try {
+    // Create lib/weavy directory if it doesn't exist
+    await fs.mkdir(libDir, { recursive: true });
+    
+    // Download weavy.js
+    const jsResponse = await fetch(`${weavyUrl}/javascript/weavy.js`);
+    const jsContent = await jsResponse.text();
+    await fs.writeFile(path.join(libDir, 'weavy.js'), jsContent);
+    
+    // Download weavy.css
+    const cssResponse = await fetch(`${weavyUrl}/css/weavy.css`);
+    const cssContent = await cssResponse.text();
+    await fs.writeFile(path.join(libDir, 'weavy.css'), cssContent);
+    
+    console.log('Weavy assets downloaded successfully');
+  } catch (error) {
+    console.error('Error downloading Weavy assets:', error);
+  }
 }
 
-// Download each file
-FILES_TO_DOWNLOAD.forEach(filePath => {
-  const url = WEAVY_URL + filePath;
-  const fileName = path.basename(filePath);
-  const fileDest = path.join(libDir, fileName);
-
-  https.get(url, (response) => {
-    if (response.statusCode !== 200) {
-      console.error(`Failed to download ${fileName}: ${response.statusCode}`);
-      return;
-    }
-
-    const fileStream = fs.createWriteStream(fileDest);
-    response.pipe(fileStream);
-
-    fileStream.on('finish', () => {
-      console.log(`Downloaded ${fileName}`);
-      fileStream.close();
-    });
-  }).on('error', (err) => {
-    console.error(`Error downloading ${fileName}:`, err.message);
-  });
-}); 
+// Run the download
+downloadWeavyAssets(); 
