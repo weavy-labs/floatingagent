@@ -1,6 +1,16 @@
 # Floating Agent Chrome Extension
 
-A Chrome extension that provides a floating panel interface integrated with Weavy for agent management.
+A Chrome extension that provides an AI-powered floating assistant integrated with Weavy. This extension creates a sleek, non-intrusive panel that slides in from the right side of your browser, allowing you to interact with AI agents while browsing any webpage.
+
+Key features:
+- 🎯 Smart context awareness - automatically captures and understands webpage content
+- 🤖 Customizable AI agents - create and manage multiple agents for different tasks
+- 💬 Interactive chat interface - smooth, real-time conversations with your agents
+- 📌 Text selection sharing - easily share and analyze selected content
+- 🎨 Modern, responsive UI - seamless integration with any webpage
+- 🔒 Secure authentication - powered by Weavy's robust authentication system
+
+Perfect for researchers, content creators, developers, or anyone looking to enhance their browsing experience with AI assistance.
 
 ## Features
 
