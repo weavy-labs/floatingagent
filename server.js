@@ -255,8 +255,8 @@ app.post('/api/save-selection', async (req, res) => {
       return res.status(400).json({ error: 'No knowledge base ID provided' });
     }
 
-    const weavyUrl = "https://77d53be50974490089ac2382a8e9e510.weavy.io";
-    const apiKey = "wys_3s76r4DGnM0ijHkmRSLWT0S5AI9Ven2rhwim";
+    const weavyUrl = WEAVY_URL;
+    const apiKey = WEAVY_API_KEY;
 
     // Prepare the file content
     const content = text;
